@@ -19,7 +19,7 @@ def counter():
 
 @app.get("/")
 def root():
-    return {"message": "Hello Wow!"}
+    return {"message": "Hello World during the coronavirus pandemic!"}
 
 @app.get("/hello/{name}", response_model=HelloResp)
 async def read_name(name:str):
