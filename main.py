@@ -63,9 +63,8 @@ def patient(rq: Patient_request):
     app.patient_db[app.last_patient_num] = rq.dict()
     return Patient_response(id=app.last_patient_num, patient=rq.dict())
 
-
 @app.get("/patient/{pk}")
 def read_patient(pk: int):
         if pk not in app.patient_db:
-            raise  HTTPException(status_code=404)
+            raise  HTTPException(status_code=204)
         return app.patient_db[pk]
