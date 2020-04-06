@@ -5,6 +5,8 @@ from pydantic import BaseModel
 
 app = FastAPI()
 app.counter = 0
+app.last_patient_num = 0
+app.patient_db = {}
 
 
 class HelloResp(BaseModel):
@@ -27,6 +29,7 @@ async def read_name(name: str):
     return HelloResp(msg=f"Hello {name}")
 
 
+# TODO: Check whether possible to __meta__ parse request to method
 @app.get("/method")
 def method_get():
     return {"method": "GET"}
@@ -46,11 +49,6 @@ def method_delete():
 def method_put():
     return {"method": "PUT"}
 
-# TODO: Check whether possible to __meta__ parse request to method
-# @getattr(app, "get")("/")
-# def resp():
-# return 1
-
 
 class GiveMeSomethingRq(BaseModel):
     name: str
@@ -64,3 +62,20 @@ class GiveMeSomethingResp(BaseModel):
 @app.post("/db", response_model=GiveMeSomethingResp)
 def receive_name(rq: GiveMeSomethingRq):
     return GiveMeSomethingResp(received=rq.dict())
+
+
+class Patient_request(BaseModel):
+    name: str
+    surename: str
+
+
+class Patient_response(BaseModel):
+    id: int
+    patient: Dict[str, str]
+
+
+@app.post("/patient")
+def patient(rq: Patient_request):
+    app.last_patient_num += 1
+    app.patient_db[app.last_patient_num] = rq
+    return Patient_response(id=app.last_patient_num, patient=rq)
