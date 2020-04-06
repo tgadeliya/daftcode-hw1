@@ -1,32 +1,17 @@
 from typing import Dict
-from fastapi import FastAPI
+from fastapi import FastAPI, Response, status, HTTPException
 from pydantic import BaseModel
 
 
 app = FastAPI()
-app.counter = 0
-app.last_patient_num = 0
-app.patient_db = {}
 
-
-class HelloResp(BaseModel):
-    msg: str
-
-
-@app.get("/counter")
-def counter():
-    app.counter += 1
-    return str(app.counter)
+app.last_patient_num = -1
+app.patient_db = dict()
 
 
 @app.get("/")
 def root():
     return {"message": "Hello World during the coronavirus pandemic!"}
-
-
-@app.get("/hello/{name}", response_model=HelloResp)
-async def read_name(name: str):
-    return HelloResp(msg=f"Hello {name}")
 
 
 # TODO: Check whether possible to __meta__ parse request to method
@@ -58,7 +43,6 @@ class GiveMeSomethingResp(BaseModel):
     received: Dict
     constant_data: str = "Jan Nowak"
 
-
 @app.post("/db", response_model=GiveMeSomethingResp)
 def receive_name(rq: GiveMeSomethingRq):
     return GiveMeSomethingResp(received=rq.dict())
@@ -66,16 +50,22 @@ def receive_name(rq: GiveMeSomethingRq):
 
 class Patient_request(BaseModel):
     name: str
-    surname: str
+    surename: str
 
 
 class Patient_response(BaseModel):
     id: int
-    patient: Dict[str, str]
-
+    patient: Dict
 
 @app.post("/patient", response_model=Patient_response)
 def patient(rq: Patient_request):
     app.last_patient_num += 1
-    app.patient_db[app.last_patient_num-1] = rq
-    return Patient_response(id=app.last_patient_num-1, patient=rq)
+    app.patient_db[app.last_patient_num] = rq.dict()
+    return Patient_response(id=app.last_patient_num, patient=rq.dict())
+
+
+@app.get("/patient/{pk}")
+def read_patient(pk: int):
+        if pk not in app.patient_db:
+            raise  HTTPException(status_code=404)
+        return app.patient_db[pk]
