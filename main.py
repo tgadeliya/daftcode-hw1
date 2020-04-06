@@ -34,20 +34,6 @@ def method_delete():
 def method_put():
     return {"method": "PUT"}
 
-
-class GiveMeSomethingRq(BaseModel):
-    name: str
-
-
-class GiveMeSomethingResp(BaseModel):
-    received: Dict
-    constant_data: str = "Jan Nowak"
-
-@app.post("/db", response_model=GiveMeSomethingResp)
-def receive_name(rq: GiveMeSomethingRq):
-    return GiveMeSomethingResp(received=rq.dict())
-
-
 class Patient_request(BaseModel):
     name: str
     surename: str
@@ -61,7 +47,7 @@ class Patient_response(BaseModel):
 def patient(rq: Patient_request):
     app.last_patient_num += 1
     app.patient_db[app.last_patient_num] = rq.dict()
-    return Patient_response(id=app.last_patient_num, patient=rq.dict())
+    return Patient_response(id=app.last_patient_num, patient=rq)
 
 @app.get("/patient/{pk}")
 def read_patient(pk: int):
