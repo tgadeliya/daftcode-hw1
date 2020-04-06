@@ -74,8 +74,9 @@ class Patient_response(BaseModel):
     patient: Dict[str, str]
 
 
-@app.post("/patient", response_model=Patient_response)
+@app.post("/patient") # response_model=Patient_response)
 def patient(rq: Patient_request):
     app.last_patient_num += 1
     app.patient_db[app.last_patient_num] = rq
-    return Patient_response(id=app.last_patient_num, patient=rq)
+    # return Patient_response(id=app.last_patient_num, patient=rq)
+    return {"id": app.last_patient_num, "patient": {"name": rq.name, "surename": rq.surename}}
