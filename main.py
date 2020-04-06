@@ -78,4 +78,4 @@ class Patient_response(BaseModel):
 def patient(rq: Patient_request):
     app.last_patient_num += 1
     app.patient_db[app.last_patient_num] = rq
-    return Patient_response(id=app.last_patient_num, patient=rq)
+    return Patient_response(id=app.last_patient_num, patient=rq).json()
