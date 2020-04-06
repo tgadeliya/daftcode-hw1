@@ -66,7 +66,7 @@ def receive_name(rq: GiveMeSomethingRq):
 
 class Patient_request(BaseModel):
     name: str
-    surename: str
+    surname: str
 
 
 class Patient_response(BaseModel):
