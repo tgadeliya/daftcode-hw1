@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
-app.last_patient_num = -1
+app.last_patient_num = 0
 app.patient_db = dict()
 
 
