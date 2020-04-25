@@ -19,7 +19,7 @@ def root():
     return {"message": "Hello, hello. I don't know why you say goodbye, I say hello"}
 
 
-@app.get("/welcome")
+@app.get("/welcome/")
 def welcome_msg():
     return {"message": "Hello, hello. I don't know why you say goodbye, I say hello"}
 
@@ -46,7 +46,7 @@ def read_patient(pk: int):
     return app.patient_db[pk]
 
 
-@app.post("/login")
+@app.post("/login/")
 def session_login_with_cookies(user: str, password: str, response: Response):
 
     correct_username = secrets.compare_digest(user, "trudnY")
@@ -57,5 +57,5 @@ def session_login_with_cookies(user: str, password: str, response: Response):
 
     session_token = sha256(bytes(f"{user}{password}{app.secret_key}", encoding="utf8")).hexdigest()
     response.set_cookie(key="session_token", value=session_token)
-    
-    return RedirectResponse(url="/welcome", status_code=302)
+
+    return RedirectResponse(url="/welcome/", status_code=302)
