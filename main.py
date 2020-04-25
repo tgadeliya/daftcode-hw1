@@ -11,14 +11,12 @@ app.patient_db = dict()
 
 @app.get("/")
 def root():
-    return {"message": "Hello, hello\n
-                        I don't know why you say goodbye, I say hello"}
+    return {"message": "Hello, hello \\n I don't know why you say goodbye, I say hello".replace("\\n", "\n")}
 
 
 @app.get("/welcome")
 def welcome_msg():
-    return {"message": "Hello, hello\n
-                        I don't know why you say goodbye, I say hello"}
+    return {"message": "Hello, hello \\n I don't know why you say goodbye, I say hello".replace("\\n", "\n")}
 
 # TODO: Check whether possible to __meta__ parse request to method
 @app.get("/method")
