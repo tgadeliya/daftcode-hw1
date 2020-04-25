@@ -60,22 +60,21 @@ def patient(rq: Patient_request):
 
 @app.get("/patient/{pk}")
 def read_patient(pk: int):
-        if pk not in app.patient_db:
-            raise  HTTPException(status_code=204)
-        return app.patient_db[pk]
+    if pk not in app.patient_db:
+        raise HTTPException(status_code=204)
+    return app.patient_db[pk]
 
 
 @app.post("/login/")
 def session_login_with_cookies(user: str, password: str, respone: Response):
-    
+
     correct_username = secrets.compare_digest(user, "trudnY")
     correct_password = secrets.compare_digest(password, "PaC13Nt")
-    
+
     if not(correct_username and correct_password):
-        raise HTTPException(status_code = 401)
-    
-    session_token = sha256(bytes(f"{user}{password}{app.secret_key}")).hexdigest()
-    respone.set_cookie(key = "session_token", value = session_token)
-    
-    return {"message" : "oki doki!"}
-    
+        raise HTTPException(status_code=401)
+
+    #session_token = sha256(bytes(f"{user}{password}{app.secret_key}")).hexdigest()
+    #respone.set_cookie(key="session_token", value=session_token)
+
+    return {"message": "oki doki!"}
