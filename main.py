@@ -19,9 +19,14 @@ def root():
     return {"message": "Hello, hello. I don't know why you say goodbye, I say hello"}
 
 
-@app.api_route("/welcome", ["GET", "POST"])
+@app.get("/welcome")
 def welcome_msg():
     return {"message": "Hello, hello. I don't know why you say goodbye, I say hello"}
+
+@app.post("/welcome")
+def welcome_msg():
+    return {"message": "Hello, hello Poster. I don't know why you say goodbye, I say hello"}
+
 
 @app.get("/method")
 def method_get():
