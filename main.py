@@ -74,7 +74,7 @@ def session_login_with_cookies(user: str, password: str, respone: Response):
     if not(correct_username and correct_password):
         raise HTTPException(status_code = 401)
     
-    session_token = sha256(bytes(f"{user}{password}{app.secret_key}").hexdigest())
+    session_token = sha256(bytes(f"{user}{password}{app.secret_key}")).hexdigest()
     respone.set_cookie(key = "session_token", value = session_token)
     
     return RedirectResponse("/welcome")
