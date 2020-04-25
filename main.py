@@ -23,7 +23,6 @@ def root():
 def welcome_msg():
     return {"message": "Hello, hello. I don't know why you say goodbye, I say hello"}
 
-# TODO: Check whether possible to __meta__ parse request to method
 @app.get("/method")
 def method_get():
     return {"method": "GET"}
@@ -77,4 +76,4 @@ def session_login_with_cookies(user: str, password: str, response: Response):
     session_token = sha256(bytes(f"{user}{password}{app.secret_key}", encoding="utf8")).hexdigest()
     response.set_cookie(key="session_token", value=session_token)
 
-    return RedirectResponse("/welcome")
+    RedirectResponse("/welcome", status_code=302)
