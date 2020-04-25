@@ -66,7 +66,7 @@ def read_patient(pk: int):
 
 
 @app.post("/login/")
-def session_login_with_cookies(user: str, password: str, respone: Response):
+def session_login_with_cookies(user: str, password: str, response: Response):
 
     correct_username = secrets.compare_digest(user, "trudnY")
     correct_password = secrets.compare_digest(password, "PaC13Nt")
@@ -74,7 +74,7 @@ def session_login_with_cookies(user: str, password: str, respone: Response):
     if not(correct_username and correct_password):
         raise HTTPException(status_code=401)
 
-    #session_token = sha256(bytes(f"{user}{password}{app.secret_key}")).hexdigest()
-    #respone.set_cookie(key="session_token", value=session_token)
+    session_token = sha256(bytes(f"{user}{password}{app.secret_key}")).hexdigest()
+    response.set_cookie(key="session_token", value=session_token)
 
-    return {"message": "oki doki!"}
+    return RedirectResponse("/welcome", status_code=200)
