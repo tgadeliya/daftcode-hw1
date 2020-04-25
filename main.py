@@ -77,5 +77,5 @@ def session_login_with_cookies(user: str, password: str, respone: Response):
     session_token = sha256(bytes(f"{user}{password}{app.secret_key}")).hexdigest()
     respone.set_cookie(key = "session_token", value = session_token)
     
-    return RedirectResponse("/welcome")
+    return {"message" : "oki doki!"}
     
