@@ -19,7 +19,7 @@ def root():
     return {"message": "Hello, hello. I don't know why you say goodbye, I say hello"}
 
 
-@app.get("/welcome")
+@app.api_route("/welcome", ["GET", "POST"])
 def welcome_msg():
     return {"message": "Hello, hello. I don't know why you say goodbye, I say hello"}
 
@@ -76,4 +76,4 @@ def session_login_with_cookies(user: str, password: str, response: Response):
     session_token = sha256(bytes(f"{user}{password}{app.secret_key}", encoding="utf8")).hexdigest()
     response.set_cookie(key="session_token", value=session_token)
 
-    return RedirectResponse("/welcome")
+    return RedirectResponse("/welcome", status_code=302)
