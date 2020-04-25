@@ -11,8 +11,14 @@ app.patient_db = dict()
 
 @app.get("/")
 def root():
-    return {"message": "Hello World during the coronavirus pandemic!"}
+    return {"message": "Hello, hello\n
+                        I don't know why you say goodbye, I say hello"}
 
+
+@app.get("/welcome")
+def welcome_msg():
+    return {"message": "Hello, hello\n
+                        I don't know why you say goodbye, I say hello"}
 
 # TODO: Check whether possible to __meta__ parse request to method
 @app.get("/method")
