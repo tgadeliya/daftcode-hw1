@@ -57,5 +57,5 @@ def session_login_with_cookies(user: str, password: str, response: Response):
 
     session_token = sha256(bytes(f"{user}{password}{app.secret_key}", encoding="utf8")).hexdigest()
     response.set_cookie(key="session_token", value=session_token)
-    response.status_code = 302
-    return RedirectResponse("/welcome", status_code=302)
+    
+    return RedirectResponse(url="/welcome", status_code=302)
