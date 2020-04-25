@@ -23,29 +23,6 @@ def root():
 def welcome_msg():
     return {"message": "Hello, hello. I don't know why you say goodbye, I say hello"}
 
-@app.post("/welcome")
-def welcome_msg():
-    return {"message": "Hello, hello Poster. I don't know why you say goodbye, I say hello"}
-
-
-@app.get("/method")
-def method_get():
-    return {"method": "GET"}
-
-
-@app.post("/method")
-def method_post():
-    return {"method": "POST"}
-
-
-@app.delete("/method")
-def method_delete():
-    return {"method": "DELETE"}
-
-
-@app.put("/method")
-def method_put():
-    return {"method": "PUT"}
 
 class Patient_request(BaseModel):
     name: str
@@ -81,4 +58,5 @@ def session_login_with_cookies(user: str, password: str, response: Response):
     session_token = sha256(bytes(f"{user}{password}{app.secret_key}", encoding="utf8")).hexdigest()
     response.set_cookie(key="session_token", value=session_token)
 
-    return RedirectResponse("/welcome", status_code=302)
+    response.status_code()
+    return RedirectResponse("google.com", status_code=302)
