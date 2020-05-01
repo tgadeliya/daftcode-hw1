@@ -65,6 +65,6 @@ async def composers(composer_name: str):
                                 WHERE composer= '{composer_name}'\
                                 ORDER BY name ASC").fetchall()
     if not response:
-        raise HTTPException(status_code=404, detail="Item not found")
+        raise HTTPException(status_code=404, detail={"error": "Item not found"})
 
     return response
