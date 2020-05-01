@@ -71,35 +71,43 @@ async def composers(composer_name: str):
 
     return response
 
+
 class Album(BaseModel):
     title: str
     artist_id: str
 
 
-@app.post("/albums")
+@app.post("/albums", status_code=201)
 async def albums(album: Album):
-    is_artid_exists = app.db_connection(
-            f"SELECT artistid\
-            FROM albums\
-            WHERE artistid = {album.artist_id}\
-            LIMIT 1").fetchall()
+    with sqlite3.connect("chinook.db") as connection:
+        conn = connection.cursor()
+        conn.row_factory = sqlite3.Row
 
-    if not is_artid_exists:
-        raise HTTPException(status_code=404,
-                            detail={"error":
-                                    f"ArtistId= {album.artist_id} not found!"})
+        is_artistid_exists = conn.execute(
+                f"SELECT artistid\
+                FROM albums\
+                WHERE artistid = {album.artist_id}\
+                LIMIT 1").fetchall()
 
-    query = await app.db_connection.execute(
-                    f"INSERT INTO albums (title) VALUES (?)",
-                    (album.title, album.artist_id)).fetchall()
-    app.db_connection.commit()
-    new_album_id = query.lastrowid
+        if not is_artistid_exists:
+            raise HTTPException(status_code=404,
+                                detail={"error":
+                                        f"ArtistId= {album.artist_id} not found!"})
 
-    artist = app.db_connection.execute(
-            "SELECT albumid, title, artistid FROM albums WHERE albumid = ?",
-            (new_album_id)).fetchone()
-    return artist
+        query = conn.execute(
+                        f"INSERT INTO albums (title, artistId)\
+                          VALUES('{album.title}', '{album.artist_id}')",
+                        ).fetchall()
 
+        connection.commit()
+        new_album_id = conn.lastrowid
+
+        album = conn.execute(
+                f"SELECT albumid, title, artistid\
+                  FROM albums\
+                  WHERE albumid = {new_album_id}").fetchone()
+
+        return album
 
 
 @app.get("/albums/{album_id}")
