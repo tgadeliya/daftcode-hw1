@@ -2,8 +2,7 @@ import secrets
 from hashlib import sha256
 from typing import Dict
 
-from fastapi import FastAPI, Response, status, HTTPException
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi import FastAPI
 
 import sqlite3
 
@@ -50,39 +49,13 @@ def read_patient(pk: int):
     return app.patient_db[pk]
 
 
-@app.post("/login")
-def session_login_with_cookies(user: str, password: str, response: Response):
-
-    correct_username = secrets.compare_digest(user, "trudnY")
-    correct_password = secrets.compare_digest(password, "PaC13Nt")
-
-    if not(correct_username and correct_password):
-        raise HTTPException(status_code=401)
-    else:
-        session_token = sha256(bytes(f"{user}{password}{app.secret_key}", encoding="utf8")).hexdigest()
-        response.set_cookie(key="session_token", value=session_token)
-
-        return RedirectResponse(url="https://daftcode-hw1.herokuapp.com/welcome", status_code=302)
-
-
 @app.get(f"/tracks")
 async def tracks(page: int, per_page: int):
     with sqlite3.connect("chinook.db") as connection:
         conn = connection.cursor()
-        conn.row_factory = sqlite3.Row
         tracks = conn.execute(f"SELECT *\
-                               FROM Tracks\
-                               ORDER BY TrackId\
-                               LIMIT {per_page} OFFSET {per_page*page}").fetchall()
+                                   FROM Tracks\
+                                   ORDER BY TrackId\
+                                   LIMIT {per_page} OFFSET {per_page*page}").fetchall()
 
-        return {
-            "TrackId": tracks["TrackId"],
-            "Name": tracks["Name"],
-            "AlbumId": tracks["AlbumId"],
-            "MediaTypeId": tracks["MediaTypeId"],
-            "GenreId": tracks["GenreId"],
-            "Composer": tracks["Composer"],
-            "Milliseconds": tracks["Milliseconds"],
-            "Bytes": tracks["Bytes"],
-            "UnitPrice": tracks["UnitPrice"]
-        }
+    return tracks
