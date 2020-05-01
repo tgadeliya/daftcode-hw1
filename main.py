@@ -117,5 +117,5 @@ def get_albumid(album_id: int):
         conn.row_factory = sqlite3.Row
         response = conn.execute(f"SELECT albumId, title, artistId\
                                       FROM albums\
-                                      WHERE albumid = {album_id}").fetchall()
+                                      WHERE albumid = {album_id}").fetchone()
     return response
