@@ -3,6 +3,7 @@ from fastapi import FastAPI, HTTPException
 import sqlite3
 from pydantic import BaseModel
 
+
 app = FastAPI()
 app.last_patient_num = -1
 app.patient_db = dict()
@@ -65,6 +66,48 @@ async def composers(composer_name: str):
                                 WHERE composer= '{composer_name}'\
                                 ORDER BY name ASC").fetchall()
     if not response:
-        raise HTTPException(status_code=404, detail={"error": "Item not found"})
+        raise HTTPException(status_code=404, detail={"error":
+                                                     "Composer not found"})
 
+    return response
+
+class Album(BaseModel):
+    title: str
+    artist_id: str
+
+
+@app.post("/albums")
+async def albums(album: Album):
+    is_artid_exists = app.db_connection(
+            f"SELECT artistid\
+            FROM albums\
+            WHERE artistid = {album.artist_id}\
+            LIMIT 1").fetchall()
+
+    if not is_artid_exists:
+        raise HTTPException(status_code=404,
+                            detail={"error":
+                                    f"ArtistId= {album.artist_id} not found!"})
+
+    query = await app.db_connection.execute(
+                    f"INSERT INTO albums (title) VALUES (?)",
+                    (album.title, album.artist_id)).fetchall()
+    app.db_connection.commit()
+    new_album_id = query.lastrowid
+
+    artist = app.db_connection.execute(
+            "SELECT albumid, title, artistid FROM albums WHERE albumid = ?",
+            (new_album_id)).fetchone()
+    return artist
+
+
+
+@app.get("/albums/{album_id}")
+def get_albumid(album_id: int):
+    with sqlite3.connect("chinook.db") as connection:
+        conn = connection.cursor()
+        conn.row_factory = sqlite3.Row
+        response = conn.execute(f"SELECT albumId, title, artistId\
+                                      FROM albums\
+                                      WHERE albumid = {album_id}").fetchall()
     return response
