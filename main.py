@@ -16,7 +16,8 @@ def root():
 
 @app.get("/welcome")
 def welcome_msg():
-    return {"message": "Hello, hello. I don't know why you say goodbye, I say hello"}
+    return {"message": "Hello, hello.\
+             I don't know why you say goodbye, I say hello"}
 
 
 class Patient_request(BaseModel):
@@ -44,7 +45,7 @@ def read_patient(pk: int):
 
 
 @app.get(f"/tracks")
-async def tracks(page: int, per_page: int):
+async def tracks(page: int = 0, per_page: int = 10):
     with sqlite3.connect("chinook.db") as connection:
         connection.row_factory = sqlite3.Row
         conn = connection.cursor()
@@ -52,5 +53,18 @@ async def tracks(page: int, per_page: int):
                                    FROM Tracks\
                                    ORDER BY TrackId\
                                    LIMIT {per_page} OFFSET {per_page*page}").fetchall()
-
     return tracks
+
+
+@app.get("/tracks/composers")
+async def composers(composer_name: str):
+    with sqlite3.connect("chinook.db") as connection:
+        conn = connection.cursor()
+        conn.row_factory = lambda cursor, x: x[0]
+        response = conn.execute(f"SELECT name FROM tracks \
+                                WHERE composer= '{composer_name}'\
+                                ORDER BY name ASC").fetchall()
+    if not response:
+        raise HTTPException(status_code=404, detail="Item not found")
+
+    return response
