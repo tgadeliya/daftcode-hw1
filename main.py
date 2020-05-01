@@ -1,23 +1,17 @@
-import secrets
-from hashlib import sha256
 from typing import Dict
-
-from fastapi import FastAPI
-
+from fastapi import FastAPI, HTTPException
 import sqlite3
-
 from pydantic import BaseModel
-from starlette.responses import RedirectResponse
 
 app = FastAPI()
-app.secret_key = "There are places I'll remember All my life, though some have changed Some forever, not for better Some have gone, and some remain"
 app.last_patient_num = -1
 app.patient_db = dict()
 
 
 @app.get("/")
 def root():
-    return {"message": "Hello, hello. I don't know why you say goodbye, I say hello"}
+    return {"message": "Hello, hello.\
+                        I don't know why you say goodbye, I say hello"}
 
 
 @app.get("/welcome")
@@ -52,6 +46,7 @@ def read_patient(pk: int):
 @app.get(f"/tracks")
 async def tracks(page: int, per_page: int):
     with sqlite3.connect("chinook.db") as connection:
+        connection.row_factory = sqlite3.Row
         conn = connection.cursor()
         tracks = conn.execute(f"SELECT *\
                                    FROM Tracks\
