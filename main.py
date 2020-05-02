@@ -119,3 +119,44 @@ def get_albumid(album_id: int):
                                       FROM albums\
                                       WHERE albumid = {album_id}").fetchone()
     return response
+
+
+class Customer(BaseModel):
+    company: str = None
+    address: str = None
+    city: str = None
+    state: str = None
+    country: str = None
+    postalcode: str = None
+    fax: str = None
+
+
+
+@app.put("/customer/{customer_id}", status_code= 200)
+async def put_customer(customer_id: int, customer: Customer):
+    with sqlite3.connect("chinook.db") as connection:
+        conn = connection.cursor()
+        conn.row_factory = sqlite3.Row
+
+        is_customerid_exists = conn.execute(
+                f"SELECT customerid\
+                FROM customers\
+                WHERE customerid = {customer_id}\
+                LIMIT 1").fetchone()
+
+        if not is_customerid_exists:
+            raise HTTPException(status_code=404,
+                                detail={"error":
+                                        f"Customer id {customer_id} not found"})
+
+        update_data = [f"{k} = '{v}'" for k, v in customer.dict(exclude_unset=True).items()]
+        update_data_str = ','.join(update_data)
+
+        query = conn.execute(f"UPDATE customers\
+                               SET {update_data_str} WHERE customerid=?", (customer_id,)).fetchall()
+
+        connection.commit()
+
+        response = conn.execute(f"SELECT * FROM customers\
+                                 WHERE customerid = {customer_id}").fetchone()
+        return response
