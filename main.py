@@ -160,3 +160,25 @@ async def put_customer(customer_id: int, customer: Customer):
         response = conn.execute(f"SELECT * FROM customers\
                                  WHERE customerid = {customer_id}").fetchone()
         return response
+
+
+
+@app.get("/sales", status_code=200)
+def sales(category:str):
+    with sqlite3.connect("chinook.db") as connection:
+        conn = connection.cursor()
+        conn.row_factory = sqlite3.Row
+
+        if (category == "customers"):
+            response = conn.execute(
+                "SELECT i.CustomerId, c.email, c.phone, ROUND(SUM(Total),2) AS Sum\
+                 FROM invoices i\
+                 JOIN customers c ON i.CustomerId = c.CustomerId\
+                 GROUP BY  i.CustomerId\
+                 ORDER BY  Sum, i.CustomerId").fetchall()
+        elif (category == ""):
+            pass
+        else:
+            raise HTTPException(status_code=404, detail={"error": "Inappropriate category"})
+
+        return response
