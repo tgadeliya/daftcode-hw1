@@ -175,7 +175,7 @@ def sales(category:str):
                  FROM invoices i\
                  JOIN customers c ON i.CustomerId = c.CustomerId\
                  GROUP BY  i.CustomerId\
-                 ORDER BY  Sum, i.CustomerId").fetchall()
+                 ORDER BY  Sum DESC, i.CustomerId").fetchall()
         elif (category == "genres"):
             response = conn.execute(
                 "SELECT g.Name, SUM(Quantity) AS Sum FROM tracks t\
