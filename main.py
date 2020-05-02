@@ -176,8 +176,13 @@ def sales(category:str):
                  JOIN customers c ON i.CustomerId = c.CustomerId\
                  GROUP BY  i.CustomerId\
                  ORDER BY  Sum, i.CustomerId").fetchall()
-        elif (category == ""):
-            pass
+        elif (category == "genres"):
+            response = conn.execute(
+                "SELECT g.Name, SUM(Quantity) AS Sum FROM tracks t\
+                JOIN invoice_items i ON t.TrackId = i.TrackId\
+                JOIN genres g ON t.GenreId = g.GenreId\
+                GROUP BY  t.GenreId\
+                ORDER BY  Sum DESC, g.Name").fetchall()
         else:
             raise HTTPException(status_code=404, detail={"error": "Inappropriate category"})
 
