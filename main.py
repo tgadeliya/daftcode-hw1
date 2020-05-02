@@ -132,7 +132,7 @@ class Customer(BaseModel):
 
 
 
-@app.put("/customer/{customer_id}", status_code= 200)
+@app.put("/customers/{customer_id}", status_code= 200)
 async def put_customer(customer_id: int, customer: Customer):
     with sqlite3.connect("chinook.db") as connection:
         conn = connection.cursor()
